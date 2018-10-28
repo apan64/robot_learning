@@ -32,7 +32,7 @@ class DataGenerator(object):
 
     def executeBashFile(self):
         """ Execute the bash file that will record audio"""
-        bashCommand = "_________________COMMAND TO RUN THE BASH FILE______________________"
+        bashCommand = "../data/collect.sh {}".format(self.angle)
         output = subprocess.check_output(['bash','-c', bashCommand])
 
     def convert_pose_to_xy_and_theta(self, pose):
@@ -48,8 +48,8 @@ class DataGenerator(object):
         """ Main function to rotate neato, record and save audio"""
         while not rospy.is_shutdown():
             rospy.Subscriber('/odom', Odometry, self.odometry_callback)
-            self.rotate()
             self.executeBashFile()
+            self.rotate()
 
 if __name__ == '__main__':
     DataGenerator().run()
