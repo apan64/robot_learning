@@ -37,7 +37,7 @@ class LinearRegressionLearning():
         '''
         |   | i
 
-        ||  | _
+        ||  | __
 
         Runs through current stored data using weights to calculate values for each set of stored data, then calculates the loss for each data
         Returns average of the losses
