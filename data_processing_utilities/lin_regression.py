@@ -5,6 +5,14 @@ class LinearRegressionLearning():
     def __init__(self):
         pass
 
+    def calculate_offset(self, data_0, data_1):
+        '''
+        Calculate the offset of the data by using cross-correlation
+        Returns a number indicating the offset of the two input data, positive means data_0 needs to be shifted left to match data_1, negative means shift right
+        '''
+        correlated = np.correlate(data_0, data_1, mode='full')
+        return np.argmax(correlated) - (len(data_1) - 1)
+
     def extract_channel_data(self, filename):
         '''
         Operating under assumption of all files having been recorded from the microphone array connected to raspi
