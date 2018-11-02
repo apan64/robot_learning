@@ -30,8 +30,9 @@ class LinearRegressionLearning():
     def store_data(self, data):
         '''
         Store data in class property, along with the expected output value of the data
+        Data of the format Tuple(correlation offset, correlation value, expected output)
         '''
-        pass
+        self.stored_data.append(data)
 
     def calculate_loss(self):
         '''
@@ -44,7 +45,7 @@ class LinearRegressionLearning():
         '''
         pass
 
-    def adjust_weights(self):
+    def adjust_weights(self, loss):
         '''
         Adjust weights based on loss value
         Use the averages of the stored data at each index
