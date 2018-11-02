@@ -4,7 +4,7 @@ import wave
 class LinearRegressionLearning():
     def __init__(self, num_weights = 10):
         self.weights = np.array([0 for __ in range(num_weights)])
-        self.stored_data = []
+        self.stored_data = None
 
     def extract_channel_data(self, filename):
         '''
@@ -30,9 +30,14 @@ class LinearRegressionLearning():
     def store_data(self, data):
         '''
         Store data in class property, along with the expected output value of the data
-        Data of the format Tuple(correlation offset, correlation value, expected output)
+        Data of the format np.ndarray, each row is np.array([correlation offset, correlation value, expected output])
         '''
-        self.stored_data.append(data)
+        # self.stored_data.append(data)
+        if stored_data:
+            self.stored_data = np.vstack([self.stored_data, data])
+        else:
+            self.stored_data = np.ndarray(shape=(1, 3), dtype=np.float32)
+            self.stored_data[0] = np.array(data)
 
     def calculate_loss(self):
         '''
@@ -50,7 +55,7 @@ class LinearRegressionLearning():
         Adjust weights based on loss value
         Use the averages of the stored data at each index
         '''
-        pass
+        
 
 
 if __name__ == '__main__':
