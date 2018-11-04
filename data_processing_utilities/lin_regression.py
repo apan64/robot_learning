@@ -18,15 +18,17 @@ class LinearRegressionLearning():
 
     def calculate_offset(self, data_0, data_1):
         '''
-        Calculate the offset of the data by using cross-correlation
+        Calculate the offset of the data by using FFT and convolution
         Returns a tuple consisting of a number indicating the offset of the two input data, positive means data_0 needs to be shifted left to match data_1, negative means shift right, and the actual correlation value
-        reference for determining shift instead of the severely lacking numpy.correlate documentation: https://stackoverflow.com/questions/49372282/find-the-best-lag-from-the-numpy-correlate-output?newreg=0cb46c75c1e842649a5c3996e2ce79b5
+        reference for FFT stuffs https://stackoverflow.com/a/4688875/10582078
+        # OLD # reference for determining shift instead of the severely lacking numpy.correlate documentation: https://stackoverflow.com/questions/49372282/find-the-best-lag-from-the-numpy-correlate-output?newreg=0cb46c75c1e842649a5c3996e2ce79b5
         '''
-        # correlated = np.correlate(data_0, data_1, mode='full')
-        # return np.argmax(correlated) - (len(data_1) - 1), np.max(correlated)
         convolved = ifft(fft(data_0) * conj(fft(data_1)))
         abs_convolved = np.absolute(convolved)
-        return np.argmax(abs_convolved), np.max(abs_convolved)
+        offset = np.argmax(abs_convolved)
+        if len(data_0) - offset < offset:
+            offset = offset - len(data_0)
+        return offset, np.max(abs_convolved)
 
 
     def prepare_data(self, data_0, data_1, expected):
