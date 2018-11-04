@@ -1,5 +1,4 @@
 import numpy as np
-import wave
 from scipy.io.wavfile import read
 
 class LinearRegressionLearning():
@@ -13,10 +12,6 @@ class LinearRegressionLearning():
         Returns tuple containing two numpy ndarrays, each corresponding to a channel (left or right microphone data)
         ndarrays contain one datapoint per frame, our files have 44100 fps, recordings 3s
         '''
-        # w_read = wave.open(filename, 'r')
-        # data = np.fromstring(w_read.readframes(w_read.getnframes()), dtype=np.uint32)
-        # channel_data_0 = data[0::2]
-        # channel_data_1 = data[1::2]
         data = read(filename)[1]
         return data[:, 0], data[:, 1]
 
