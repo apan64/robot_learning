@@ -17,8 +17,8 @@ class LinearRegressionLearning():
         # data = np.fromstring(w_read.readframes(w_read.getnframes()), dtype=np.uint32)
         # channel_data_0 = data[0::2]
         # channel_data_1 = data[1::2]
-        channel_data_0, channel_data_1 = read(filename)[1]
-        return channel_data_0, channel_data_1
+        data = read(filename)[1]
+        return data[:1], data[1:]
 
     def calculate_offset(self, data_0, data_1):
         '''
