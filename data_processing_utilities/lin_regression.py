@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import fft, ifft, conj
 from scipy.io.wavfile import read
 
 class LinearRegressionLearning():
@@ -21,8 +22,12 @@ class LinearRegressionLearning():
         Returns a tuple consisting of a number indicating the offset of the two input data, positive means data_0 needs to be shifted left to match data_1, negative means shift right, and the actual correlation value
         reference for determining shift instead of the severely lacking numpy.correlate documentation: https://stackoverflow.com/questions/49372282/find-the-best-lag-from-the-numpy-correlate-output?newreg=0cb46c75c1e842649a5c3996e2ce79b5
         '''
-        correlated = np.correlate(data_0, data_1, mode='full')
-        return np.argmax(correlated) - (len(data_1) - 1), np.max(correlated)
+        # correlated = np.correlate(data_0, data_1, mode='full')
+        # return np.argmax(correlated) - (len(data_1) - 1), np.max(correlated)
+        convolved = ifft(fft(a) * conj(fft(b)))
+        abs_convolved = np.absolute(convolved)
+        return np.argmax(abs_convolved), np.max(abs_convolved)
+
 
     def prepare_data(self, data_0, data_1, expected):
         offset = self.calculate_offset(data_0, data_1)
@@ -48,7 +53,7 @@ class LinearRegressionLearning():
 
         Runs through current stored data using weights to calculate values for each set of stored data, then calculates the loss for each data
         Returns average of the losses
-        '''
+        ''' 
         pass
 
     def adjust_weights(self, loss):
