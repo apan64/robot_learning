@@ -18,7 +18,7 @@ class LinearRegressionLearning():
         # channel_data_0 = data[0::2]
         # channel_data_1 = data[1::2]
         data = read(filename)[1]
-        return data[:1], data[1:]
+        return data[:, 0], data[:, 1]
 
     def calculate_offset(self, data_0, data_1):
         '''
