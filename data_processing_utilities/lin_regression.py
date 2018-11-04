@@ -24,7 +24,7 @@ class LinearRegressionLearning():
         '''
         # correlated = np.correlate(data_0, data_1, mode='full')
         # return np.argmax(correlated) - (len(data_1) - 1), np.max(correlated)
-        convolved = ifft(fft(a) * conj(fft(b)))
+        convolved = ifft(fft(data_0) * conj(fft(data_1)))
         abs_convolved = np.absolute(convolved)
         return np.argmax(abs_convolved), np.max(abs_convolved)
 
