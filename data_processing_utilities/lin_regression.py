@@ -1,9 +1,10 @@
 import numpy as np
 import wave
+from scipy.io.wavfile import read
 
 class LinearRegressionLearning():
-    def __init__(self, num_weights = 10):
-        self.weights = np.array([0 for __ in range(num_weights)])
+    def __init__(self, num_weights=6):
+        self.weights = np.array([1 for __ in range(num_weights)])
         self.stored_data = None
 
     def extract_channel_data(self, filename):
@@ -13,9 +14,10 @@ class LinearRegressionLearning():
         ndarrays contain one datapoint per frame, our files have 44100 fps, recordings 3s
         '''
         w_read = wave.open(filename, 'r')
-        data = np.fromstring(w_read.readframes(w_read.getnframes()), dtype=np.uint32)
-        channel_data_0 = data[0::2]
-        channel_data_1 = data[1::2]
+        # data = np.fromstring(w_read.readframes(w_read.getnframes()), dtype=np.uint32)
+        # channel_data_0 = data[0::2]
+        # channel_data_1 = data[1::2]
+        channel_data_0, channnel_data_1 = read(filename)
         return channel_data_0, channel_data_1
 
     def calculate_offset(self, data_0, data_1):
@@ -27,16 +29,20 @@ class LinearRegressionLearning():
         correlated = np.correlate(data_0, data_1, mode='full')
         return np.argmax(correlated) - (len(data_1) - 1), np.max(correlated)
 
+    def prepare_data(self, data_0, data_1, expected):
+        offset = self.calculate_offset(data_0, data_1)
+        return offset[0], offset[1], (np.average(data_0) + np.average(data_1)) / 2, expected
+
     def store_data(self, data):
         '''
         Store data in class property, along with the expected output value of the data
-        Data of the format np.ndarray, each row is np.array([correlation offset, correlation value, expected output])
+        Data of the format np.ndarray, each row is np.array([correlation offset, correlation value, average wav value, expected output])
         '''
         # self.stored_data.append(data)
         if stored_data:
             self.stored_data = np.vstack([self.stored_data, data])
         else:
-            self.stored_data = np.ndarray(shape=(1, 3), dtype=np.float32)
+            self.stored_data = np.ndarray(shape=(1, 4), dtype=np.float32)
             self.stored_data[0] = np.array(data)
 
     def calculate_loss(self):
@@ -53,9 +59,31 @@ class LinearRegressionLearning():
     def adjust_weights(self, loss):
         '''
         Adjust weights based on loss value
-        Use the averages of the stored data at each index
         '''
-        
+        # # calculating the averages of all the data for each entry
+        # delay_average, correlate_average = np.average(self.stored_data[:, 0]), np.average(self.stored_data[:, 1])
+        # # adjusting weights based on average values and the total average loss
+
+
+        # might just do actual gradient descent
+        '''
+        Features (data):(x, 3)
+        Targets: (x, 1)
+        Weights:(6, 1) - scratch that, (3, 1)
+        '''
+        delays = self.stored_data[:, 0]
+        correlates = self.stored_data[:, 1]
+        wavs = self.stored_data[:, 2]
+
+        d_delay_0 = -delays * (''' this needs to be the derivative of the loss function''')
+        # d_delay_1 = 
+        d_correlate_0 = 
+        # d_correlate_1 = 
+        d_wav_0 = 
+        # d_wav_1 = 
+
+
+
 
 
 if __name__ == '__main__':
