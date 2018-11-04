@@ -13,11 +13,11 @@ class LinearRegressionLearning():
         Returns tuple containing two numpy ndarrays, each corresponding to a channel (left or right microphone data)
         ndarrays contain one datapoint per frame, our files have 44100 fps, recordings 3s
         '''
-        w_read = wave.open(filename, 'r')
+        # w_read = wave.open(filename, 'r')
         # data = np.fromstring(w_read.readframes(w_read.getnframes()), dtype=np.uint32)
         # channel_data_0 = data[0::2]
         # channel_data_1 = data[1::2]
-        channel_data_0, channnel_data_1 = read(filename)
+        channel_data_0, channel_data_1 = read(filename)[1]
         return channel_data_0, channel_data_1
 
     def calculate_offset(self, data_0, data_1):
@@ -75,12 +75,12 @@ class LinearRegressionLearning():
         correlates = self.stored_data[:, 1]
         wavs = self.stored_data[:, 2]
 
-        d_delay_0 = -delays * (''' this needs to be the derivative of the loss function''')
-        # d_delay_1 = 
-        d_correlate_0 = 
-        # d_correlate_1 = 
-        d_wav_0 = 
-        # d_wav_1 = 
+        # d_delay_0 = -delays * (''' this needs to be the derivative of the loss function''')
+        # # d_delay_1 = 
+        # d_correlate_0 = 
+        # # d_correlate_1 = 
+        # d_wav_0 = 
+        # # d_wav_1 = 
 
 
 
