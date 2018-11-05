@@ -58,7 +58,7 @@ class LinearRegressionLearning():
         Runs through current stored data using weights to calculate values for each set of stored data, then calculates the loss for each data
         Returns average of the losses
         '''
-        features = self.stored_data[:,0]
+        features = np.delete(self.stored_data, 2, axis=1)
         targets = self.stored_data[:,2]
         predictions = self.predict(features, self.weights)
         N = len(features)
@@ -93,7 +93,7 @@ class LinearRegressionLearning():
         # correlates = self.stored_data[:, 1]
         wavs = self.stored_data[:, 1]
 
-        features = self.stored_data[:, 0]
+        features = np.delete(self.stored_data, 2, axis=1)
         targets = self.stored_data[:, 2]
         predictions = self.predict(features, self.weights)
 
