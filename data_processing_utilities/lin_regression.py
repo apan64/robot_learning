@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import fft, ifft, conj
 from scipy.io.wavfile import read
+from sklearn.preprocessing import normalize
 
 class LinearRegressionLearning():
     def __init__(self, num_weights=2):
@@ -50,19 +51,20 @@ class LinearRegressionLearning():
         self.normalize()
 
     def normalize(self):
-        features = np.delete(self.stored_data, 2, axis=1)
-        for feature in features.T:
-            fmean = np.mean(feature)
-            frange = np.amax(feature) - np.amin(feature)
+        # features = np.delete(self.stored_data, 2, axis=1)
+        # for feature in features.T:
+        #     fmean = np.mean(feature)
+        #     frange = np.amax(feature) - np.amin(feature)
 
-            #Vector Subtraction
-            feature -= fmean
+        #     #Vector Subtraction
+        #     feature -= fmean
 
-            #Vector Division
-            feature /= frange
-        print('THIS IS NORMALIZE \n___________________\nSTORED_DATA: {}\nFEATURES: {}'.format(self.stored_data, features))
+        #     #Vector Division
+        #     feature /= frange
+        # print('THIS IS NORMALIZE \n___________________\nSTORED_DATA: {}\nFEATURES: {}'.format(self.stored_data, features))
 
-        self.stored_data = np.hstack((features, self.stored_data[:, [2]]))
+        # self.stored_data = np.hstack((features, self.stored_data[:, [2]]))
+        self.stored_data = normalize(self.stored_data, axis=0, norm='l1')
 
     def calculate_loss(self):
         '''
