@@ -55,8 +55,22 @@ class LinearRegressionLearning():
 
         Runs through current stored data using weights to calculate values for each set of stored data, then calculates the loss for each data
         Returns average of the losses
-        ''' 
-        pass
+        '''
+        features = self.stored_data[:,0]
+        targets = self.stored_data[:,2]
+        predictions = self.predict(features, self.weights)
+        N = len(features)
+
+        # Matrix math
+        sq_error = (predictions - targets)**2
+        # Return average squared error among predictions
+        return 1.0/(2*N) * sq_error.sum()
+        
+
+    def predict(self, features, weights):
+        return np.dot(features,weights)
+
+
 
     def adjust_weights(self, loss):
         '''
