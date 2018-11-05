@@ -74,7 +74,7 @@ class LinearRegressionLearning():
 
 
 
-    def adjust_weights(self, loss):
+    def adjust_weights(self):
         '''
         Adjust weights based on loss value
         '''
@@ -112,4 +112,12 @@ class LinearRegressionLearning():
 
 
 if __name__ == '__main__':
-    pass
+    lin = LinearRegressionLearning()
+    files = []
+    for file in files:
+        channel_0, channel_1 = lin.extract_channel_data(file)
+        expected_val = 'THIS IS WHERE EXPECTED ANGLE NEEDS TO BE OBTAINED'
+        lin.store_data(lin.prepare_data(channel_0, channel_1, expected))
+        lin.adjust_weights()
+        print('Angle: {}\tLoss: {}'.format(expected_val, lin.calculate_loss()))
+
