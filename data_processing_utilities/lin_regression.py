@@ -4,7 +4,7 @@ from scipy.io.wavfile import read
 
 class LinearRegressionLearning():
     def __init__(self, num_weights=2):
-        self.weights = np.array([1 for __ in range(num_weights)])
+        self.weights = np.ones(num_weights)
         self.stored_data = None
 
     def extract_channel_data(self, filename):
@@ -42,10 +42,9 @@ class LinearRegressionLearning():
         Store data in class property, along with the expected output value of the data
         Data of the format np.ndarray, each row is np.array([correlation offset, correlation value, average wav value, expected output])
         '''
-        # self.stored_data.append(data)
-        if self.stored_data != None:
+        if type(self.stored_data) == np.ndarray:
             self.stored_data = np.vstack([self.stored_data, data])
-        else:
+        else: # Catches weight initialized as None and initializes it as numpy.ndarray
             self.stored_data = np.ndarray(shape=(1, 3), dtype=np.float32)
             self.stored_data[0] = np.array(data)
         self.normalize()
@@ -86,6 +85,7 @@ class LinearRegressionLearning():
 
     def predict(self, features, weights):
         print "Features:{}, Weights:{}".format(features,weights)
+        print "Prediction:{}".format(np.dot(features,weights))
         return np.dot(features,weights)
 
 
@@ -119,9 +119,9 @@ class LinearRegressionLearning():
         # # d_correlate_1 = 
         d_wav_0 = -wavs * (targets - predictions)
         # # d_wav_1 = 
-
-        self.weights[0] -= np.mean(d_delay_0)
-        self.weights[1] -= np.mean(d_wav_0)
+        print("d_delay_0:{}, d_wav_0{}".format(d_delay_0, d_wav_0))
+        self.weights[0] += np.mean(d_delay_0)
+        self.weights[1] += np.mean(d_wav_0)
 
 
 
