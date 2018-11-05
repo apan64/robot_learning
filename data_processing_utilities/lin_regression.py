@@ -60,6 +60,7 @@ class LinearRegressionLearning():
 
             #Vector Division
             feature /= frange
+        print('THIS IS NORMALIZE \n___________________\nSTORED_DATA: {}\nFEATURES: {}'.format(self.stored_data, features))
 
         self.stored_data = np.hstack((features, self.stored_data[:, [2]]))
 
