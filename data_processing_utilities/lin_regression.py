@@ -61,7 +61,7 @@ class LinearRegressionLearning():
             #Vector Division
             feature /= frange
 
-        self.stored_data = np.hstack(features, self.stored_data[:, 2])
+        self.stored_data = np.hstack((features, self.stored_data[:, [2]]))
 
     def calculate_loss(self):
         '''
