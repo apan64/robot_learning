@@ -48,6 +48,21 @@ class LinearRegressionLearning():
         else:
             self.stored_data = np.ndarray(shape=(1, 3), dtype=np.float32)
             self.stored_data[0] = np.array(data)
+        self.normalize()
+
+    def normalize(self):
+        features = np.delete(self.stored_data, 2, axis=1)
+        for feature in features.T:
+            fmean = np.mean(feature)
+            frange = np.amax(feature) - np.amin(feature)
+
+            #Vector Subtraction
+            feature -= fmean
+
+            #Vector Division
+            feature /= frange
+
+        self.stored_data = np.hstack(features, self.stored_data[:, 2])
 
     def calculate_loss(self):
         '''
