@@ -43,7 +43,7 @@ class LinearRegressionLearning():
         Data of the format np.ndarray, each row is np.array([correlation offset, correlation value, average wav value, expected output])
         '''
         # self.stored_data.append(data)
-        if stored_data:
+        if self.stored_data:
             self.stored_data = np.vstack([self.stored_data, data])
         else:
             self.stored_data = np.ndarray(shape=(1, 3), dtype=np.float32)
@@ -113,11 +113,12 @@ class LinearRegressionLearning():
 
 if __name__ == '__main__':
     lin = LinearRegressionLearning()
-    files = []
+    files = open('data/recordings2/lsOutput.txt', 'r') # Change this to be the txt file with names of wav files
+    audio_string = 'audio'
     for file in files:
-        channel_0, channel_1 = lin.extract_channel_data(file)
-        expected_val = 'THIS IS WHERE EXPECTED ANGLE NEEDS TO BE OBTAINED'
-        lin.store_data(lin.prepare_data(channel_0, channel_1, expected))
+        wav_filename = file.strip()
+        channel_0, channel_1 = lin.extract_channel_data('data/recordings2/{}'.format(wav_filename))
+        expected_val = float(wav_filename[wav_filename.index(audio_string) + len(audio_string) + 2 :len(wav_filename)-4])
+        lin.store_data(lin.prepare_data(channel_0, channel_1, expected_val))
         lin.adjust_weights()
         print('Angle: {}\tLoss: {}'.format(expected_val, lin.calculate_loss()))
-
