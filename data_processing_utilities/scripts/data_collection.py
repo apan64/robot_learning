@@ -31,6 +31,11 @@ class DataGenerator(object):
         self.thread3_bool1 = False
         self.thread3_bool2 = False
 
+        self.data_count = 100
+        self.wav_file_count = 1
+        self.wav_file = "../data/snap_audio_1.wav"
+
+
     def rotate(self):
         """ Rotate the neato for a set speed and time """
         while self.thread3_bool1 and self.thread3_bool2:
@@ -38,16 +43,32 @@ class DataGenerator(object):
             self.thread3_bool1 = False 
             self.thread3_bool2 = False
 
-            self.vel_pub.publish(Twist(Vector3(0, 0, 0), Vector3(0, 0, -1 * self.rotate_speed)))
-            time.sleep(self.rotate_time)
-            self.vel_pub.publish(Twist(Vector3(0, 0, 0), Vector3(0, 0, 0)))
+            # Rotate for rotate_time
+            self.vel_pub.publish(Twist(Vector3(0, 0, 0), Vector3(0, 0, -1 * self.rotate_speed)))  
             print("Rotating") # for debugging purposes
-            time.sleep(self.rotate_time) # sleep until rotating is done
+            time.sleep(self.rotate_time)
             print("Done Rotating") # for debugging purposes
-            
+            self.vel_pub.publish(Twist(Vector3(0, 0, 0), Vector3(0, 0, 0)))
+
+            # Update neato's angle
+            rospy.Subscriber('/odom', Odometry, self.odometry_callback)
+
             # thread 1 and 2 can run again
             self.thread1_bool = True
             self.thread2_bool = True
+
+            self.data_count += 1
+            self.data_count = self.data_count%400
+            self.wav_file_count = self.data_count/100
+            if self.wav_file_count == 0:
+                self.wav_file = "../data/snap_audio_0.wav"
+            elif self.wav_file_count == 1:
+                self.wav_file = "../data/snap_audio_1.wav"
+            elif self.wav_file_count == 2:
+                self.wav_file = "../data/snap_audio_2.wav"
+            else:
+                self.wav_file = "../data/no_snap_audio.wav"
+
 
     def odometry_callback(self, msg):
         """ Update the stored angle of the neato """
@@ -59,7 +80,10 @@ class DataGenerator(object):
         while self.thread2_bool:
             self.thread2_bool = False
             bash_command = "../data/collect.sh"
-            angle_string = str(self.angle)
+            angle_string = "audio" + str(self.wav_file_count) + "_" + str(self.angle)
+
+            print(angle_string) # debugging
+
             subprocess.call([bash_command, angle_string])
             self.thread3_bool2 = True
 
@@ -68,9 +92,11 @@ class DataGenerator(object):
         while self.thread1_bool:
             self.thread1_bool = False
             bash_command = "../data/play_audio.sh"
-            wav_file = "../data/recording_snap.wav"
+
+            # wav_file = "../data/snap_audio_"
+
             time.sleep(.5)
-            subprocess.call([bash_command, wav_file])
+            subprocess.call([bash_command, self.wav_file])
             self.thread3_bool1 = True
 
     def convert_pose_to_xy_and_theta(self, pose):
@@ -85,7 +111,7 @@ class DataGenerator(object):
     def run(self):
         """ Main function to rotate neato, record and save audio"""
         while not rospy.is_shutdown():
-            rospy.Subscriber('/odom', Odometry, self.odometry_callback)
+            # rospy.Subscriber('/odom', Odometry, self.odometry_callback)
             t1 = threading.Thread(target = self.playAudioFile)
             t2 = threading.Thread(target = self.executeBashFile)
             t1.start()
