@@ -64,7 +64,7 @@ class LinearRegressionLearning():
         # print('THIS IS NORMALIZE \n___________________\nSTORED_DATA: {}\nFEATURES: {}'.format(self.stored_data, features))
 
         # self.stored_data = np.hstack((features, self.stored_data[:, [2]]))
-        self.stored_data = normalize(self.stored_data, axis=0, norm='l1')
+        self.stored_data = np.hstack((normalize(np.delete(self.stored_data, 2, axis=1), axis=0, norm='l1'), self.stored_data[:, [2]]))
 
     def calculate_loss(self):
         '''
