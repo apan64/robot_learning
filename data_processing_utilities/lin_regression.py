@@ -35,7 +35,7 @@ class LinearRegressionLearning():
     def prepare_data(self, data_0, data_1, expected):
         offset = self.calculate_offset(data_0, data_1)
         # return offset[0], offset[1], (np.average(data_0) + np.average(data_1)) / 2, expected
-        return offset, np.argmax(abs_convolved), expected
+        return offset, (np.average(data_0) + np.average(data_1)) / 2, expected
 
     def store_data(self, data):
         '''
