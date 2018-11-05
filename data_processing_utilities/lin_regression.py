@@ -93,11 +93,15 @@ class LinearRegressionLearning():
         # correlates = self.stored_data[:, 1]
         wavs = self.stored_data[:, 1]
 
-        d_delay_0 = -delays * (''' this needs to be the derivative of the loss function''')
+        features = self.stored_data[:, 0]
+        targets = self.stored_data[:, 2]
+        predictions = self.predict(features, self.weights)
+
+        d_delay_0 = -delays * (targets - predictions)
         # # d_delay_1 = 
         # d_correlate_0 = 
         # # d_correlate_1 = 
-        d_wav_0 = -wavs * ('''derivative of loss function''')
+        d_wav_0 = -wavs * (targets - predictions)
         # # d_wav_1 = 
 
         self.weights[0] -= np.mean(d_delay_0)
