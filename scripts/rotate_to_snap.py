@@ -40,16 +40,16 @@ class RotateToSnap(object):
 
     def predict_angle(self):
         wav_filename = "recording_" + self.recorded_audio_filename + ".wav"
-        # channel_0, channel_1 = self.lin.extract_channel_data('data/recordings2/{}'.format(wav_filename))
-        channel_0, channel_1 = self.lin.extract_channel_data('../data_processing_utilities/data/recordings2/recording_audio0_0.wav')
+        # channel_0, channel_1 = self.lin.extract_channel_data('../data_processing_utilities/data/recordings2/{}'.format(wav_filename))
+        channel_0, channel_1 = self.lin.extract_channel_data('../data_processing_utilities/data/recordings2/recording_audio0_0.wav') # To test on existing audio file
         inputs = [[self.lin.calculate_offset(channel_0, channel_1)], [(np.average(channel_0) + np.average(channel_1))/2]]
         predicted_angle = np.dot(inputs, self.lin.weights)
-        print predicted_angle
+        print "Predicted angle of the snapping sound: {}".format(predicted_angle)
         return predicted_angle
 
     def rotate(self, angle):
         """ Rotate the neato for an amount of time to turn to the specified angle """
-
+        pass
 
     def convert_pose_to_xy_and_theta(self, pose):
         """ Convert pose (geometry_msgs.Pose) to a (x,y,yaw) tuple """
@@ -62,6 +62,7 @@ class RotateToSnap(object):
 
 
     def getKey(self):
+        """ Obtains the input from the keyboard to determine if the user would like to run this """
         tty.setraw(sys.stdin.fileno())
         select.select([sys.stdin], [], [], 0)
         key = sys.stdin.read(1)
@@ -73,14 +74,12 @@ class RotateToSnap(object):
         while not rospy.is_shutdown():
             key = self.getKey()
             if key and key in self.valid_keys:
-                # self.executeAudioRecording()
-                # time.sleep(3.5) # Pause for the amount of time recording takes
+                self.executeAudioRecording()
+                time.sleep(3.5) # Pause for the amount of time recording takes
                 predicted_angle = self.predict_angle()
-                # self.rotate(predicted_angle)
-            else:
-                self.vel_pub.publish(Twist())
-                if key == '\x03':
-                    break
+                self.rotate(predicted_angle)
+            if key == '\x03':
+                break
 
 if __name__ == '__main__':
     RotateToSnap().run()
