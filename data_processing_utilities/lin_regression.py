@@ -2,10 +2,13 @@ import numpy as np
 from scipy import fft, ifft, conj
 from scipy.io.wavfile import read
 from sklearn.preprocessing import normalize
+import matplotlib.pyplot as plt
+import math
 
 class LinearRegressionLearning():
-    def __init__(self, num_weights=2):
+    def __init__(self, num_weights=1):
         self.weights = np.ones(num_weights)
+        self.weights = [1]
         self.stored_data = None
 
     def extract_channel_data(self, filename):
@@ -74,21 +77,34 @@ class LinearRegressionLearning():
         Runs through current stored data using weights to calculate values for each set of stored data, then calculates the loss for each data
         Returns average of the losses
         '''
-        normalized_data = self.normalize()
+        # normalized_data = self.normalize()
+        normalized_data = self.stored_data
         features = np.delete(normalized_data, 2, axis=1)
+        features = np.delete(features, 1, axis=1)
+
         targets = normalized_data[:,2]
+        delays = normalized_data[:, 0]
         predictions = self.predict(features, self.weights)
         N = len(features)
-
         # Matrix math
         sq_error = (predictions - targets)**2
+        print "Predictions:{}, Targets:{}".format(predictions,targets)
+        print "Square error: {}".format(sq_error)
         # Return average squared error among predictions
         return 1.0/(2*N) * sq_error.sum()
         
 
     def predict(self, features, weights):
-        # print "Features:{}\nWeights:{}".format(features,weights)
-        # print "Prediction:{}".format(np.dot(features,weights))
+        """ Predict the expected values for the features and weights provided """
+        
+        dot_product = np.dot(features, weights)
+
+        # UNCOMMENT BELOW TO SEE PLOT OF PREDICTIONS AS MODEL RUNS (also must uncomment last two lines of main)
+        # plot_frequency = 50
+        # if len(self.stored_data[:,0]) % plot_frequency == 0:
+        #     legend = str(len(self.stored_data[:,0])) + " Features"
+        #     plt.plot(self.stored_data[:,0], dot_product, label=legend)
+
         return np.dot(features,weights)
 
 
@@ -102,18 +118,21 @@ class LinearRegressionLearning():
         # # adjusting weights based on average values and the total average loss
 
 
+
         # might just do actual gradient descent
         '''
         Features (data):(x, 3)
         Targets: (x, 1)
         Weights:(6, 1) - scratch that, (3, 1)
         '''
-        normalized_data = self.normalize()
+        normalized_data = self.stored_data
+        # normalized_data = self.normalize()
         delays = normalized_data[:, 0]
         # correlates = self.stored_data[:, 1]
         wavs = normalized_data[:, 1]
 
         features = np.delete(normalized_data, 2, axis=1)
+        features = np.delete(features, 1, axis=1)
         targets = normalized_data[:, 2]
         predictions = self.predict(features, self.weights)
 
@@ -121,14 +140,15 @@ class LinearRegressionLearning():
         # # d_delay_1 = 
         # d_correlate_0 = 
         # # d_correlate_1 = 
-        d_wav_0 = -wavs * (targets - predictions)
+        # d_wav_0 = -wavs * (targets - predictions)
         # # d_wav_1 = 
         print('Features: {}\nWeights: {}\nTargets: {}\nPredictions: {}'.format(features, self.weights, targets, predictions))
-        print("d_delay_0:{}, d_wav_0{}".format(d_delay_0, d_wav_0))
-        self.weights[0] -= np.mean(d_delay_0)
-        self.weights[1] -= np.mean(d_wav_0)
+        # print("d_delay_0:{}, d_wav_0{}".format(d_delay_0, d_wav_0))
 
+        d_delay_mean = np.mean(d_delay_0)
 
+        self.weights[0] -= math.copysign(1, d_delay_mean) * math.log(math.fabs(d_delay_mean))
+        # self.weights[1] -= np.mean(d_wav_0)
 
 
 
@@ -143,3 +163,7 @@ if __name__ == '__main__':
         lin.store_data(lin.prepare_data(channel_0, channel_1, expected_val))
         lin.adjust_weights()
         print('Angle: {}\tLoss: {}\n\n'.format(expected_val, lin.calculate_loss()))
+
+    # UNCOMMENT BELOW AND SECTION IN PREDICT FUNCTION TO SEE PREDICTION CHANGE OVER TIME
+    # plt.legend()
+    # plt.show()
