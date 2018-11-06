@@ -87,8 +87,8 @@ class LinearRegressionLearning():
         
 
     def predict(self, features, weights):
-        print "Features:{}, Weights:{}".format(features,weights)
-        print "Prediction:{}".format(np.dot(features,weights))
+        # print "Features:{}\nWeights:{}".format(features,weights)
+        # print "Prediction:{}".format(np.dot(features,weights))
         return np.dot(features,weights)
 
 
@@ -123,9 +123,10 @@ class LinearRegressionLearning():
         # # d_correlate_1 = 
         d_wav_0 = -wavs * (targets - predictions)
         # # d_wav_1 = 
+        print('Features: {}\nWeights: {}\nTargets: {}\nPredictions: {}'.format(features, self.weights, targets, predictions))
         print("d_delay_0:{}, d_wav_0{}".format(d_delay_0, d_wav_0))
-        self.weights[0] += np.mean(d_delay_0)
-        self.weights[1] += np.mean(d_wav_0)
+        self.weights[0] -= np.mean(d_delay_0)
+        self.weights[1] -= np.mean(d_wav_0)
 
 
 
@@ -133,7 +134,7 @@ class LinearRegressionLearning():
 
 if __name__ == '__main__':
     lin = LinearRegressionLearning()
-    files = open('data/recordings2/lsOutput.txt', 'r') # Change this to be the txt file with names of wav files
+    files = open('data/recordings2/training_filename_list.txt', 'r') # Change this to be the txt file with names of wav files
     audio_string = 'audio'
     for file in files:
         wav_filename = file.strip()
@@ -141,4 +142,4 @@ if __name__ == '__main__':
         expected_val = float(wav_filename[wav_filename.index(audio_string) + len(audio_string) + 2 :len(wav_filename)-4])
         lin.store_data(lin.prepare_data(channel_0, channel_1, expected_val))
         lin.adjust_weights()
-        print('Angle: {}\tLoss: {}'.format(expected_val, lin.calculate_loss()))
+        print('Angle: {}\tLoss: {}\n\n'.format(expected_val, lin.calculate_loss()))
