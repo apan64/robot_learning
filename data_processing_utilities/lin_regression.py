@@ -48,7 +48,6 @@ class LinearRegressionLearning():
         else: # Catches weight initialized as None and initializes it as numpy.ndarray
             self.stored_data = np.ndarray(shape=(1, 3), dtype=np.float32)
             self.stored_data[0] = np.array(data)
-        self.normalize()
 
     def normalize(self):
         # features = np.delete(self.stored_data, 2, axis=1)
@@ -64,7 +63,7 @@ class LinearRegressionLearning():
         # print('THIS IS NORMALIZE \n___________________\nSTORED_DATA: {}\nFEATURES: {}'.format(self.stored_data, features))
 
         # self.stored_data = np.hstack((features, self.stored_data[:, [2]]))
-        self.stored_data = np.hstack((normalize(np.delete(self.stored_data, 2, axis=1), axis=0, norm='l1'), self.stored_data[:, [2]]))
+        return np.hstack((normalize(np.delete(self.stored_data, 2, axis=1), axis=0, norm='l1'), self.stored_data[:, [2]]))
 
     def calculate_loss(self):
         '''
@@ -75,8 +74,9 @@ class LinearRegressionLearning():
         Runs through current stored data using weights to calculate values for each set of stored data, then calculates the loss for each data
         Returns average of the losses
         '''
-        features = np.delete(self.stored_data, 2, axis=1)
-        targets = self.stored_data[:,2]
+        normalized_data = self.normalize()
+        features = np.delete(normalized_data, 2, axis=1)
+        targets = normalized_data[:,2]
         predictions = self.predict(features, self.weights)
         N = len(features)
 
@@ -108,12 +108,13 @@ class LinearRegressionLearning():
         Targets: (x, 1)
         Weights:(6, 1) - scratch that, (3, 1)
         '''
-        delays = self.stored_data[:, 0]
+        normalized_data = self.normalize()
+        delays = normalized_data[:, 0]
         # correlates = self.stored_data[:, 1]
-        wavs = self.stored_data[:, 1]
+        wavs = normalized_data[:, 1]
 
-        features = np.delete(self.stored_data, 2, axis=1)
-        targets = self.stored_data[:, 2]
+        features = np.delete(normalized_data, 2, axis=1)
+        targets = normalized_data[:, 2]
         predictions = self.predict(features, self.weights)
 
         d_delay_0 = -delays * (targets - predictions)
